@@ -1,0 +1,32 @@
+version: '3.6'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: elasticsearch
+    environment:
+      - cluster.name="es-data-cluster"
+      - node.name=es-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - transport.host=0.0.0.0
+    ports: ['9200:9200']
+    networks: ['stack']
+    volumes:
+      - 'es_data:/usr/share/elasticasearch/data'
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.3
+    container_name: kibana
+    environment:
+      server.name: kibana
+      server.host: "0"
+      elasticsearch.hosts: "http://elasticsearch:9200"
+    ports: ['5601:5601']
+    depends_on: ['elasticsearch']
+    networks: ['stack']
+volumes:
+  es_data:
+
+networks: {stack: {}}
+volumes:
+  es_data: 
